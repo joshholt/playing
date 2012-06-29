@@ -4,6 +4,7 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
+import play.api.data.validation.Constraints._
 
 import models.Task
 
@@ -24,7 +25,7 @@ object Application extends Controller {
   }
 
   def newTask = Action { implicit request =>
-    taskForm.bindFormRequest.fold(
+    taskForm.bindFromRequest.fold(
       errors => BadRequest(views.html.index(Task.all(), errors)),
       label  => {
         Task.create(label)

@@ -7,14 +7,14 @@ import play.api.Play.current
 
 case class Task(id:Long, label:String)
 
-val task = {
-  get[Long]("id") ~
-  get[String]("label") map {
-    case id~label => Task(id, label)
-  }
-}
-
 object Task {
+
+  val task = {
+    get[Long]("id") ~
+    get[String]("label") map {
+      case id~label => Task(id, label)
+    }
+  }
 
   def all(): List[Task] = DB.withConnection { implicit c =>
     SQL("select * from task").as(task *)
