@@ -4,6 +4,8 @@ import anorm._
 import anorm.SqlParser._
 import play.api.db._
 import play.api.Play.current
+import play.api.libs.concurrent._
+import play.api.libs.concurrent.Akka
 
 case class Task(id:Long, label:String)
 
@@ -16,8 +18,8 @@ object Task {
     }
   }
 
-  def all(): List[Task] = DB.withConnection { implicit c =>
-    SQL("select * from task").as(task *)
+  def all(): Promise[List[Task]] = Akka.future {
+    DB.withConnection { implicit c => SQL("select * from task").as(task *) }
   }
 
   def create(label: String) {

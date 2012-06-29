@@ -5,6 +5,7 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.data.validation.Constraints._
+import play.api.libs.concurrent._
 
 import models.Task
 
@@ -21,12 +22,26 @@ object Application extends Controller {
   }
 
   def tasks = Action {
-    Ok(views.html.index(Task.all(), taskForm))
+    Async {
+      Task.all().orTimeout("Query timed out", 1000).map { resultOrTimeout =>
+        resultOrTimeout.fold(
+          result => Ok(views.html.index(result, taskForm)),
+          timeout => InternalServerError(timeout)
+        )
+      }
+    }
   }
 
   def newTask = Action { implicit request =>
     taskForm.bindFromRequest.fold(
-      errors => BadRequest(views.html.index(Task.all(), errors)),
+      errors => Async {
+          Task.all().orTimeout("Query timed out", 1000).map { resultOrTimeout =>
+            resultOrTimeout.fold(
+              result => BadRequest(views.html.index(result, errors)),
+              timeout => InternalServerError(timeout)
+            )
+          }
+        },
       label  => {
         Task.create(label)
         Redirect(routes.Application.tasks)
