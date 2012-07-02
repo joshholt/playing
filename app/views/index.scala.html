@@ -1,27 +1,28 @@
 @(tasks: List[Task], taskForm: Form[String])
 
 @import helper._
+@import helper.bootstrap._
 
 @main("Task List") {
 
-    <h1>@tasks.size task(s)</h1>
-
-    <ul>
-      @tasks.map { task =>
-        <li>
-          @task.label
-          @form(routes.Application.deleteTask(task.id)) {
-            <input type="submit" value="Delete">
-          }
-        </li>
+  <div class="row">
+    <span class="span12">
+      @form(routes.Application.newTask, 'class -> "well form-inline") {
+        @inputText(taskForm("label"), 'placeholder -> "Enter a new task...")
+        <button type="submit" class="btn btn-primary">Create</button>
       }
-    </ul>
+    </span>
+  </div>
 
-    <h2>Add a new task</h2>
 
-    @form(routes.Application.newTask) {
-      @inputText(taskForm("label"))
-      <input type="submit" value="Create">
-    }
-
+  @tasks.map { task =>
+    <div class="row">
+      <span class="span11">@task.label</span>
+      <a href="#" class="ajax-post-link close" data-url="@routes.Application.deleteTask(task.id)">&times;</a>
+    </div>
+  }
+  <hr>
+  <footer>
+    <p>@tasks.size task(s)</p>
+  </footer>
 }

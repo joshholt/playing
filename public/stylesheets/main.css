@@ -1,0 +1,9 @@
+body {
+	padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+}
+
+.help-block {
+	display:none;
+}
+
+.input-append input[class*="span"], .input-append .uneditable-input[class*="span"], .input-prepend input[class*="span"], .input-prepend .uneditable-input[class*="span"], .row-fluid .input-prepend [class*="span"], .row-fluid .input-append [class*="span"] { margin-right: -4px; }
